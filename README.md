@@ -428,3 +428,160 @@ theme: ThemeData.dark().copyWith(
 
 4. **س: كيف عاد زر `Re-calculate` للشاشة الأولى مع الحفاظ على مدخلات المستخدم؟**
    * **الإجابة**: استدعينا `Navigator.pop(context)`، والتي تقوم بحذف شاشة النتيجة من المكدس (Stack) والعودة للشاشة السابقة التي لا تزال محتفظة بحالتها ومتغيراتها الأصلية في الذاكرة.
+
+
+---
+
+# 🧠 شرح الـ Controller والـ Provider في Flutter
+
+---
+
+## 1️⃣ ما هو الـ Controller في Flutter؟
+
+### الفكرة ببساطة:
+الـ **Controller** (المتحكم) هو كائن (Object) أو كلاس مستقل مسؤول عن **فصل منطق البيانات (Business Logic) عن واجهة المستخدم (UI)**، والتحكم في سلوك ويدجت معينة أو حالة الشاشة.
+
+بدلاً من أن نكتب المتغيرات والحسابات داخل كلاس الشاشة (`StatefulWidget`)، ننقلها داخل **Controller**.
+
+---
+
+### أنواع الـ Controllers في Flutter:
+
+#### أ) Controllers مدمجة جاهزة داخل فلاتر (Built-in Controllers):
+1. **`TextEditingController`**: للتحكم في حقول الإدخال النصية (`TextField`) وقراءة ما يكتبه المستخدم أو مسحه.
+2. **`ScrollController`**: للتحكم في القوائم المنسدلة والتمرير والنزول لأسفل القائمة برمجياً.
+3. **`PageController`**: للتحكم في التنقل بين الصفحات في `PageView`.
+4. **`AnimationController`**: للتحكم في بدء وإيقاف وتكرار الحركات والأنيميشن.
+
+#### ب) Controller مخصص لإدارة الحالة (Custom State Controller):
+كلاس نكتبه بأنفسنا لتخزين بيانات التطبيق ودوال التعديل عليها، مثل إنشاء كلاس `WaterController` بدلاً من كتابة كل شيء داخل الشاشة.
+
+---
+
+## 2️⃣ ما هو الـ Provider في Flutter؟
+
+### الفكرة ببساطة:
+الـ **Provider** هو أشهر مكتبة لإدارة الحالة (**State Management**) في Flutter، وهو مدعوم وموصى به رسمياً من فريق فلاتر و Google.
+
+### ما المشكلة التي يحلها Provider؟
+في التطبيقات العادية بدون Provider:
+* إذا أردت تمرير بيانات من الشاشة الأولى للشاشة الثالثة، ستضطر لتمريرها يدوياً عبر كل الشاشات والـ Widgets الوسيطة (**Prop Drilling**).
+* عند استدعاء `setState()` يتم إعادة بناء (Rebuild) الشاشة بأكملها بكل أزرارها وبطاقاتها حتى لو تغير رقم واحد فقط.
+
+**حل الـ Provider:**
+يعمل مثل **"خزان مياه مركزي"** في أعلى شجرة التطبيق (Widget Tree). أي Widget في أي مكان بالتطبيق تستطيع سحب البيانات منه مباشرة أو الاستماع للتغييرات بدون إعادة بناء الشاشة كلها!
+
+---
+
+## 3️⃣ المفاهيم الأساسية الثلاثة في Provider:
+
+| المفهوم | الوظيفة | التشبيه |
+|:---|:---|:---|
+| **`ChangeNotifier`** | كلاس يحتوي على البيانات والدوال، ويطلق تنبيهاً عند أي تعديل عبر `notifyListeners()` | **محطة الراديو** (تبث الأخبار عند حدوث جديد) |
+| **`ChangeNotifierProvider`** | ويدجت يوضع في مكان عالي بالشجرة ليجعل الـ Controller متاحاً للجميع | **برج الإرسال** (يوصل الإشارة للمستمعين) |
+| **`Consumer` أو `context.watch()`** | ويدجت يستمع للبيانات ويعيد رسم نفسه فقط عندما تتغير | **جهاز الراديو** (يستقبل التحديث ويغير الصوت) |
+
+---
+
+## 4️⃣ مثال عملي: تحويل تطبيق Water Tracker إلى Controller + Provider
+
+### الخطوة 1: إنشاء الـ Controller كـ `ChangeNotifier`:
+```dart
+import 'package:flutter/material.dart';
+
+class WaterController extends ChangeNotifier {
+  // البيانات (State)
+  String? selectedGender;
+  double activityHours = 1.0;
+  int weight = 60;
+  int age = 20;
+
+  // دوال تعديل البيانات
+  void setGender(String gender) {
+    selectedGender = gender;
+    notifyListeners(); // إعلام الواجهة بحدوث تغيير لتحديث نفسها
+  }
+
+  void setActivity(double hours) {
+    activityHours = hours;
+    notifyListeners();
+  }
+
+  void incrementWeight() {
+    if (weight < 200) {
+      weight++;
+      notifyListeners();
+    }
+  }
+
+  void decrementWeight() {
+    if (weight > 30) {
+      weight--;
+      notifyListeners();
+    }
+  }
+
+  // دالة الحساب
+  double get totalLitres {
+    int baseMl = weight * 35;
+    int activityMl = (activityHours * 250).round();
+    return (baseMl + activityMl) / 1000;
+  }
+}
+```
+
+---
+
+### الخطوة 2: توفير الـ Controller للتطبيق عبر `ChangeNotifierProvider` في `main.dart`:
+```dart
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => WaterController(),
+      child: const MyApp(),
+    ),
+  );
+}
+```
+
+---
+
+### الخطوة 3: استهلاك البيانات في الواجهة بكل سهولة:
+
+#### الطريقة الأولى (باستخدام `Consumer`):
+يعيد بناء هذا الجزء فقط من الشاشة دون لمس باقي الصفحة:
+```dart
+Consumer<WaterController>(
+  builder: (context, controller, child) {
+    return Text(
+      '${controller.weight} kg',
+      style: const TextStyle(fontSize: 36),
+    );
+  },
+)
+```
+
+#### الطريقة الثانية (باستخدام `context.read` و `context.watch`):
+* **`context.watch<WaterController>()`**: للقراءة والاستماع (تحديث الواجهة عند التغيير).
+* **`context.read<WaterController>()`**: لتنفيذ دالة بدون الاستماع (مثالي للأزرار):
+```dart
+// في زر الزيادة (+):
+RawMaterialButton(
+  onPressed: () {
+    context.read<WaterController>().incrementWeight();
+  },
+  child: const Icon(Icons.add),
+);
+```
+
+---
+
+## 5️⃣ مقارنة سريعة: `setState` مقابل `Provider + Controller`
+
+| وجه المقارنة | `setState()` | `Provider + Controller` |
+|:---|:---|:---|
+| **مكان البيانات والمنطق** | مدمج داخل كلاس الـ Widget (`UI`) | مفصول تماماً في كلاس `Controller` مستقل |
+| **إعادة بناء الواجهة (Rebuild)** | تعيد بناء الـ Widget بالكامل | تعيد بناء الـ Widget المستمع فقط بدقة |
+| **مشاركة البيانات بين الشاشات** | صعبة وتتطلب تمرير يدوي في الـ Constructor | سهلة جداً والبيانات متاحة في أي شاشة |
+| **إمكانية اختبار الكود (Testing)** | صعبة لاختلاط المنطق بالواجهة | سهلة جداً لأن الـ Controller كلاس Dart خالص |
+| **المناسبة للمشاريع** | المشاريع الصغيرة والبسيطة | المشاريع المتوسطة والكبيرة والاحترافية |
