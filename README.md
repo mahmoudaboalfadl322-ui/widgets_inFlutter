@@ -36,6 +36,21 @@
 | 25 | `StatefulWidget` | أساسي | ويدجت تفاعلي يحتوي على حالة وبيانات تتغير عبر `setState()` |
 | 26 | `ThemeData` | حسب الحاجة | توحيد الألوان والمظهر العام في كامل التطبيق |
 | 27 | `TextField` / `TextFormField` | أساسي | حقل إدخال نصوص أو أرقام من المستخدم مع خيارات التنسيق والتحقق |
+| 28 | `ListView` / `ListView.builder` | أساسي | عرض قوائم عناصر قابلة للتمرير بكفاءة عالية في الذاكرة |
+| 29 | `GridView` / `GridView.builder` | أساسي | عرض شبكة من العناصر في صفوف وأعمدة |
+| 30 | `ListTile` | أساسي | ويدجت جاهز ومثالي لصفوف القوائم (أيقونة، عنوان، وصف، سهم) |
+| 31 | `Divider` | أساسي | خط أفقي رفيع يفصل بين العناصر |
+| 32 | `Image` (`asset` / `network`) | أساسي | عرض الصور من مجلد المشروع المحلي أو عبر روابط الإنترنت |
+| 33 | `CircleAvatar` | أساسي | دائرة مخصصة لصور البروفايل أو الحروف الشخصية |
+| 34 | `Stack` & `Positioned` | أساسي | ترتيب ووضع العناصر فوق بعضها كطبقات ثلاثية الأبعاد |
+| 35 | `Wrap` (ومقارنتها بـ `SingleChildScrollView`) | حسب الحاجة | ترتيب العناصر مع الانتقال التلقائي لسطر جديد عند امتلاء المساحة |
+| 36 | `FloatingActionButton` (FAB) | أساسي | الزر الدائري العائم فوق المحتوى في زاوية الشاشة |
+| 37 | `SnackBar` & `ScaffoldMessenger` | أساسي | شريط رسائل التنبيه المنبثق من أسفل الشاشة لثوانٍ |
+| 38 | `AlertDialog` & `showDialog` | أساسي | نافذة حوار منبثقة في منتصف الشاشة تطلب تأكيد المستخدم |
+| 39 | `Switch` | أساسي | زر تبديل تشغيل/إيقاف (On / Off) مثل تفعيل الوضع الليلي |
+| 40 | `Checkbox` | أساسي | مربع اختيار علامة صح للموافقة على الشروط أو إتمام مهام |
+| 41 | `DropdownButton` / `DropdownButtonFormField` | أساسي | قائمة منسدلة لاختيار عنصر واحد من بين عدة خيارات |
+| 42 | `Form` & `GlobalKey<FormState>` | أساسي | حاوية تجميع وإدارة حقول الإدخال والتحقق من صحتها دفعة واحدة |
 
 ---
 
@@ -450,6 +465,275 @@ TextField(
   onChanged: (value) {
     print('User typed: $value');
   },
+)
+```
+
+---
+
+### 28. `ListView` & `ListView.builder`
+* **وظيفته**: أشهر وأهم ويدجت لعرض قوائم العناصر القابلة للتمرير (Scrollable Lists).
+* **الفرق بينهما**:
+  - `ListView(children: [...])`: يقوم بتحميل كل العناصر دفعة واحدة في الذاكرة (مناسب للقوائم الصغيرة الثابتة مثل صفحة الإعدادات).
+  - `ListView.builder`: يبني العناصر عند الحاجة فقط أثناء التمرير (**Lazy Loading**)، وهو الأفضل للأداء مع القوائم الطويلة أو اللانهائية القادمة من الـ API أو قاعدة البيانات.
+* **مثال كود**:
+```dart
+ListView.builder(
+  itemCount: historyList.length,
+  itemBuilder: (context, index) {
+    return ListTile(
+      title: Text('Record #${index + 1}'),
+      subtitle: Text('Score: ${historyList[index]}'),
+    );
+  },
+)
+```
+
+---
+
+### 29. `GridView` & `GridView.builder`
+* **وظيفته**: عرض العناصر في شبكة منظمة من صفوف وأعمدة قابلة للتمرير (Grid).
+* **مكان استخدامه**: معارض الصور، شبكات المنتجات في المتاجر، لوحة الأزرار في الآلة الحاسبة.
+* **مثال كود**:
+```dart
+GridView.builder(
+  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2, // عمودان
+    crossAxisSpacing: 10,
+    mainAxisSpacing: 10,
+  ),
+  itemCount: 6,
+  itemBuilder: (context, index) => Container(color: const Color(0xFF1D1E33)),
+)
+```
+
+---
+
+### 30. `ListTile`
+* **وظيفته**: ويدجت جاهز مصمم خصيصاً كصف نموذجي في القوائم وفقاً لـ Material Design، يوزع العناصر تلقائياً بمسافات قياسية:
+  - `leading`: أيقونة أو صورة في البداية.
+  - `title`: العنوان الرئيسي.
+  - `subtitle`: سطر وصف توضيحي فرعي.
+  - `trailing`: أيقونة في النهاية (مثل سهم `>` أو زر مفتاح).
+  - `onTap`: للضغط على الصف بالكامل.
+* **مثال كود**:
+```dart
+ListTile(
+  leading: const Icon(Icons.history, color: Color(0xFF00E5FF)),
+  title: const Text('Previous BMI Result', style: TextStyle(color: Colors.white)),
+  subtitle: const Text('22.4 - Normal', style: TextStyle(color: Colors.grey)),
+  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+  onTap: () {},
+)
+```
+
+---
+
+### 31. `Divider`
+* **وظيفته**: رسم خط أفقي رفيع وأنيق يفصل بين العناصر أو الأقسام في القوائم والبطاقات.
+* **أهم خصائصه**: `thickness` (سُمك الخط)، و `color` (لون الخط)، و `height` (المسافة الرأسية الإجمالية حوله).
+* **مثال كود**:
+```dart
+const Divider(color: Colors.white24, thickness: 1, height: 20);
+```
+
+---
+
+### 32. `Image` (`Image.asset` & `Image.network`)
+* **وظيفته**: عرض الصور الثابتة والمتحركة (PNG, JPG, WebP, GIF) في التطبيق.
+* **النوعان الأساسيان**:
+  - `Image.asset('assets/images/logo.png')`: لتحميل الصور المخزنة داخل مجلدات المشروع محلياً (بعد تعريفها في `pubspec.yaml`).
+  - `Image.network('https://example.com/photo.jpg')`: لتحميل وعرض الصور مباشرة عبر رابط إنترنت مع إمكانية إضافة `loadingBuilder`.
+* **مثال كود**:
+```dart
+Image.network(
+  'https://images.unsplash.com/photo-1517838277536-f5f99be501cd',
+  height: 120,
+  fit: BoxFit.cover,
+)
+```
+
+---
+
+### 33. `CircleAvatar`
+* **وظيفته**: ويدجت دائري الشكل مخصص لعرض صور الملف الشخصي (Profile Avatars) أو الأيقونات أو الأحرف الأولى من اسم المستخدم.
+* **أهم خصائصه**: `radius` (نصف قطر الدائرة)، و `backgroundImage` (صورة الخلفية)، و `backgroundColor`.
+* **مثال كود**:
+```dart
+const CircleAvatar(
+  radius: 35,
+  backgroundColor: Color(0xFF00E5FF),
+  child: Icon(Icons.person, size: 40, color: Color(0xFF0A0E21)),
+)
+```
+
+---
+
+### 34. `Stack` & `Positioned`
+* **وظيفته**: ترتيب وتركيب العناصر **فوق بعضها البعض كطبقات ثلاثية الأبعاد (Z-axis)** بدلاً من جانب بعضها.
+* **`Positioned`**: ويدجت يُستخدم حصرياً داخل الـ `Stack` لتثبيت العنصر في مكان محدد بدقة (`top`, `bottom`, `left`, `right`).
+* **أشهر استخداماته**: وضع علامة تنبيه حمراء صغيرة فوق أيقونة الجرس، أو كتابة نص فوق صورة خلفية.
+* **مثال كود**:
+```dart
+Stack(
+  children: [
+    Container(width: 100, height: 100, color: Colors.blueGrey),
+    const Positioned(
+      top: 8,
+      right: 8,
+      child: CircleAvatar(radius: 6, backgroundColor: Colors.red),
+    ),
+  ],
+)
+```
+
+---
+
+### 35. `Wrap` (ومقارنتها بـ `SingleChildScrollView` مع `Column`)
+* **سؤال المناقشة الشهير**: ما الفرق بين `Row` و `Wrap` و `SingleChildScrollView`؟
+  1. **الـ `Row`**: يرص العناصر أفقياً في سطر واحد؛ إذا زاد عددها عن عرض الشاشة يحدث خطأ **(Overflow)** فوراً!
+  2. **الـ `Wrap`**: الحل الذكي للـ `Row`؛ يرص العناصر أفقياً، وبمجرد أن تمتلئ الشاشة **ينزل تلقائياً للسطر التالي** (مثل الكلمات أو الـ Chips والوسوم).
+  3. **`SingleChildScrollView` مع `Column`**: الحل الذكي للـ `Column`؛ عندما تزيد العناصر رأسياً عن طول الشاشة، يمنع الـ Overflow ويحول الصفحة إلى **قائمة قابلة للتمرير الرأسي (Scrollable)**.
+* **مثال كود للـ Wrap**:
+```dart
+Wrap(
+  spacing: 8.0, // مسافة أفقية بين العناصر
+  runSpacing: 4.0, // مسافة رأسية بين السطور
+  children: [
+    Chip(label: Text('Fitness')),
+    Chip(label: Text('Cardio')),
+    Chip(label: Text('Hydration')),
+    Chip(label: Text('Nutrition')),
+  ],
+)
+```
+
+---
+
+### 36. `FloatingActionButton` (FAB)
+* **وظيفته**: الزر الدائري البارز والعائم الذي يطفو في زاوية الشاشة فوق كل المحتويات، ويوضع داخل خاصية `floatingActionButton` في كلاس `Scaffold`.
+* **مثال كود**:
+```dart
+Scaffold(
+  floatingActionButton: FloatingActionButton(
+    backgroundColor: const Color(0xFF00E5FF),
+    onPressed: () {},
+    child: const Icon(Icons.add, color: Color(0xFF0A0E21)),
+  ),
+)
+```
+
+---
+
+### 37. `SnackBar` & `ScaffoldMessenger`
+* **وظيفته**: شريط تنبيه خفيف يظهر من أسفل الشاشة لعدة ثوانٍ لإعلام المستخدم بنجاح عملية أو بوجود خطأ دون مقاطعة استخدامه للتطبيق.
+* **مثال كود**:
+```dart
+ScaffoldMessenger.of(context).showSnackBar(
+  const SnackBar(
+    content: Text('Please fill all required fields!'),
+    backgroundColor: Colors.redAccent,
+    duration: Duration(seconds: 2),
+  ),
+);
+```
+
+---
+
+### 38. `AlertDialog` & `showDialog`
+* **وظيفته**: نافذة حوارية منبثقة تظهر في منتصف الشاشة مع تعتيم الخلفية، تطلب تأكيداً أو قراراً من المستخدم وتمنعه من التفاعل حتى يجيب.
+* **مثال كود**:
+```dart
+showDialog(
+  context: context,
+  builder: (context) => AlertDialog(
+    title: const Text('Reset Data?'),
+    content: const Text('Are you sure you want to reset all inputs?'),
+    actions: [
+      TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+      ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text('Reset')),
+    ],
+  ),
+);
+```
+
+---
+
+### 39. `Switch`
+* **وظيفته**: زر تبديل ثنائي الحالة (تشغيل / إيقاف - On/Off).
+* **أشهر استخداماته**: تفعيل الوضع الداكن (Dark Mode) أو تشغيل التنبيهات.
+* **مثال كود**:
+```dart
+Switch(
+  value: isDarkMode,
+  activeColor: const Color(0xFF00E5FF),
+  onChanged: (bool newValue) {
+    setState(() {
+      isDarkMode = newValue;
+    });
+  },
+)
+```
+
+---
+
+### 40. `Checkbox`
+* **وظيفته**: مربع اختيار يضع علامة صح (`true / false`) عند النقر عليه.
+* **أشهر استخداماته**: الموافقة على الشروط والأحكام، أو تتبع قائمة المهام المنجزة (Todo List).
+* **مثال كود**:
+```dart
+Checkbox(
+  value: isAgreed,
+  activeColor: const Color(0xFF00E5FF),
+  onChanged: (bool? newValue) {
+    setState(() {
+      isAgreed = newValue ?? false;
+    });
+  },
+)
+```
+
+---
+
+### 41. `DropdownButton` & `DropdownButtonFormField`
+* **وظيفته**: قائمة منسدلة أنيقة تتيح للمستخدم اختيار عنصر واحد من بين قائمة من الخيارات دون أخذ مساحة كبيرة على الشاشة (مثل اختيار الدولة، أو فئة النشاط).
+* **مثال كود**:
+```dart
+DropdownButton<String>(
+  value: selectedCity,
+  items: ['Cairo', 'Alexandria', 'Giza'].map((city) {
+    return DropdownMenuItem(value: city, child: Text(city));
+  }).toList(),
+  onChanged: (newCity) {
+    setState(() => selectedCity = newCity!);
+  },
+)
+```
+
+---
+
+### 42. `Form` & `GlobalKey<FormState>`
+* **وظيفته**: الحاوية الذكية التي تجمع كل حقول `TextFormField` في صفحة التسجيل، وتسمح بفحص صحة كل الحقول دفعة واحدة بنقرة زر واحدة عبر `formKey.currentState!.validate()`.
+* **مثال كود**:
+```dart
+final _formKey = GlobalKey<FormState>();
+
+Form(
+  key: _formKey,
+  child: Column(
+    children: [
+      TextFormField(
+        validator: (value) => value!.isEmpty ? 'Field required' : null,
+      ),
+      ElevatedButton(
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            print('All inputs are valid!');
+          }
+        },
+        child: const Text('Submit'),
+      ),
+    ],
+  ),
 )
 ```
 
