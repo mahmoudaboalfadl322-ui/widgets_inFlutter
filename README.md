@@ -149,9 +149,9 @@ Container(
 ```dart
 Column(
   children: [
-    Row(...),       // بطاقات الجنس
-    Container(...), // بطاقة شريط الطول
-    Row(...),       // بطاقات الوزن والعمر
+    Row(...),       // Gender cards
+    Container(...), // Height slider card
+    Row(...),       // Weight & age cards
   ],
 )
 ```
@@ -374,8 +374,9 @@ SingleChildScrollView(
   - `push`: الانتقال من شاشة الإدخال إلى شاشة النتيجة مع تمرير قيمة الـ BMI.
   - `pop`: عند الضغط على زر `RE-CALCULATE` للعودة للشاشة الأولى.
 * **مثال من الكود**:
+
+الانتقال لشاشة النتيجة:
 ```dart
-// الانتقال لشاشة النتيجة:
 Navigator.push(
   context,
   MaterialPageRoute(
@@ -386,8 +387,10 @@ Navigator.push(
     ),
   ),
 );
+```
 
-// العودة للشاشة السابقة:
+العودة للشاشة السابقة:
+```dart
 Navigator.pop(context);
 ```
 
@@ -497,7 +500,7 @@ ListView.builder(
 ```dart
 GridView.builder(
   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 2, // عمودان
+    crossAxisCount: 2, // 2 columns
     crossAxisSpacing: 10,
     mainAxisSpacing: 10,
   ),
@@ -596,8 +599,8 @@ Stack(
 * **مثال كود للـ Wrap**:
 ```dart
 Wrap(
-  spacing: 8.0, // مسافة أفقية بين العناصر
-  runSpacing: 4.0, // مسافة رأسية بين السطور
+  spacing: 8.0, // Horizontal spacing
+  runSpacing: 4.0, // Vertical spacing
   children: [
     Chip(label: Text('Fitness')),
     Chip(label: Text('Cardio')),
@@ -769,7 +772,7 @@ class BmiController extends ChangeNotifier {
 
   void setGender(String gender) {
     selectedGender = gender;
-    notifyListeners(); // إعلام الويدجتس المستمعة بالتحديث
+    notifyListeners(); // Notify listening widgets
   }
 
   void setHeight(int newHeight) {
@@ -791,7 +794,7 @@ class BmiController extends ChangeNotifier {
     }
   }
 
-  // حساب مؤشر كتلة الجسم (BMI = weight / (height/100)^2)
+  // BMI calculation: weight / (height/100)^2
   double get bmi {
     double heightInMeters = height / 100.0;
     return weight / (heightInMeters * heightInMeters);
@@ -806,21 +809,26 @@ class BmiController extends ChangeNotifier {
 ```
 
 ### استخدام الـ Provider في الواجهة:
+
+1. تسجيل الـ Provider في أعلى شجرة التطبيق (`main.dart`):
 ```dart
-// 1. تسجيل الـ Provider في أعلى شجرة التطبيق (main.dart):
 ChangeNotifierProvider(
   create: (context) => BmiController(),
   child: const MyApp(),
 )
+```
 
-// 2. قراءة القيمة في الشاشة (تحديث هذا الجزء فقط):
+2. قراءة القيمة في الشاشة (تحديث هذا الجزء فقط):
+```dart
 Consumer<BmiController>(
   builder: (context, controller, child) {
     return Text('${controller.weight} kg');
   },
 )
+```
 
-// 3. استدعاء الدالة عند الضغط على زر (+):
+3. استدعاء الدالة عند الضغط على زر (+):
+```dart
 RawMaterialButton(
   onPressed: () {
     context.read<BmiController>().incrementWeight();
@@ -899,18 +907,18 @@ await db.execute('''
 ### الهيكل القياسي لكتابة StatelessWidget:
 
 ```dart
-// 1. استيراد المكتبة الأساسية
+// 1. Import Material library
 import 'package:flutter/material.dart';
 
-// 2. تعريف الكلاس وتوريثه من StatelessWidget
+// 2. Class definition extending StatelessWidget
 class CustomCard extends StatelessWidget {
   
-  // 3. تعريف المتغيرات التي تستقبلها الويدجت (يجب أن تكون final دائماً)
+  // 3. Immutable properties (must be final)
   final String title;
   final IconData icon;
   final VoidCallback onTap;
 
-  // 4. إنشاء الـ Constructor مع استخدام super.key لتحسين الأداء
+  // 4. Constructor using super.key for optimization
   const CustomCard({
     super.key,
     required this.title,
@@ -918,7 +926,7 @@ class CustomCard extends StatelessWidget {
     required this.onTap,
   });
 
-  // 5. دالة build المسؤولة عن رسم الواجهة
+  // 5. Build method rendering the widget tree
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -968,7 +976,7 @@ class CustomCard extends StatelessWidget {
 ```dart
 import 'package:flutter/material.dart';
 
-// الكلاس الأول: تعريف الويدجت وطلب إنشاء الـ State
+// Class 1: Widget configuration
 class CounterPage extends StatefulWidget {
   final String screenTitle;
 
@@ -978,40 +986,38 @@ class CounterPage extends StatefulWidget {
   State<CounterPage> createState() => _CounterPageState();
 }
 
-// الكلاس الثاني: إدارة الحالة والواجهة
+// Class 2: State management & UI
 class _CounterPageState extends State<CounterPage> {
-  // 1. المتغيرات القابلة للتغيير (Mutable State)
+  // 1. Mutable state variables
   int _counter = 0;
   late TextEditingController _textController;
 
-  // 2. initState: تعمل مرة واحدة فقط عند ظهور الشاشة لأول مرة
+  // 2. initState: called once when screen is first created
   @override
   void initState() {
     super.initState();
     _textController = TextEditingController();
-    print('1. initState: تم فتح الشاشة وتهيئة المتغيرات');
   }
 
-  // 3. didChangeDependencies: تعمل بعد initState مباشرة أو عند تغير Theme/Provider
+  // 3. didChangeDependencies: called after initState or when Theme/Provider changes
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('2. didChangeDependencies: تم تحديث التبعيات');
   }
 
-  // 4. دالة تعديل القيمة وتحديث الواجهة
+  // 4. Method to update state and trigger rebuild
   void _increment() {
     setState(() {
-      _counter++; // نعدل المتغير داخل setState لإخبار فلاتر بإعادة رسم الشاشة
+      _counter++;
     });
   }
 
-  // 5. دالة build: ترسم الشاشة، ويتم استدعاؤها كلما نفذنا setState()
+  // 5. build: renders UI whenever setState is called
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.screenTitle), // استخدام widget للوصول لمتغيرات الكلاس الأول
+        title: Text(widget.screenTitle),
       ),
       body: Center(
         child: Column(
@@ -1033,11 +1039,10 @@ class _CounterPageState extends State<CounterPage> {
     );
   }
 
-  // 6. dispose: تعمل عند إغلاق الشاشة نهائياً لمسح الكنترولرز وتفريغ الذاكرة
+  // 6. dispose: called when screen is closed to free resources
   @override
   void dispose() {
-    _textController.dispose(); // مسح الـ Controller لمنع تسريب الذاكرة (Memory Leak)
-    print('3. dispose: تم إغلاق الشاشة وتفريغ الذاكرة');
+    _textController.dispose();
     super.dispose();
   }
 }
@@ -1048,22 +1053,38 @@ class _CounterPageState extends State<CounterPage> {
 ## 🔄 مراحل دورة حياة الـ StatefulWidget (Lifecycle Summary):
 
 ```text
-[إنشاء الشاشة]
-      ⬇
-1. createState()           ⬅ إنشاء كائن الحالة في الذاكرة
-      ⬇
-2. initState()             ⬅ تهيئة المتغيرات والاشتراكات لمرة واحدة
-      ⬇
-3. didChangeDependencies() ⬅ ربط الـ InheritedWidgets / الثيم
-      ⬇
-4. build()                 ⬅ رسم وتلوين عناصر الشاشة للمستخدم
-      ⬇ 
-   [عند حدوث تفاعل] ⬅ setState() ⬅ يعيد تشغيل build() فقط لتحديث الرقم!
-      ⬇
-5. deactivate()            ⬅ عند إزالة الشاشة مؤقتاً
-      ⬇
-6. dispose()               ⬅ الإغلاق النهائي للشاشة وتفريغ الذاكرة
+[Screen Created]
+       |
+       v
+1. createState()           --> Creates State object in memory
+       |
+       v
+2. initState()             --> One-time setup & variables
+       |
+       v
+3. didChangeDependencies() --> InheritedWidget & Theme bind
+       |
+       v
+4. build()                 --> Renders widget tree to screen
+       |
+       v
+   [setState() Called]     --> Re-runs build() on interaction
+       |
+       v
+5. deactivate()            --> Widget removed temporarily
+       |
+       v
+6. dispose()               --> Permanent disposal & memory cleanup
 ```
+
+* **تفاصيل المراحل بالتسلسل**:
+  1. `createState()`: إنشاء كائن الحالة (`State`) في الذاكرة عند استدعاء الويدجت.
+  2. `initState()`: تهيئة المتغيرات والاشتراكات (`TextEditingController`, Listeners) لمرة واحدة فقط.
+  3. `didChangeDependencies()`: تُستدعى بعد `initState` مباشرة، أو عند تغير حالة عامة (مثل الثيم أو الـ Provider).
+  4. `build()`: المسؤولة عن رسم وتلوين شجرة الويدجتس وعرضها للمستخدم.
+  * `setState()`: عند حدوث أي تفاعل، يتم استدعاؤها لإخبار فلاتر بإعادة تشغيل `build()` فقط لتحديث القيمة في الواجهة.
+  5. `deactivate()`: عند نقل الويدجت أو إزالتها مؤقتاً من شجرة العناصر.
+  6. `dispose()`: الإغلاق النهائي للشاشة وتفريغ الذاكرة ومسح الـ Controllers لمنع تسريب الذاكرة (Memory Leak).
 
 ---
 
@@ -1080,7 +1101,6 @@ class _CounterPageState extends State<CounterPage> {
 4. **استخدم الـ Widget في شاشتك الرئيسية بسهولة**:
 
 ```dart
-// في شاشتك الرئيسية:
 Row(
   children: [
     CustomCard(
