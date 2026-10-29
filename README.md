@@ -539,3 +539,240 @@ await db.execute('''
 ## 2️⃣ قواعد البيانات السحابية (Cloud Databases - أونلاين)
 * **`Firebase Cloud Firestore`**: قاعدة بيانات NoSQL سحابية من Google، ميزتها الكبرى هي المزامنة اللحظية (Realtime Sync) لبيانات المستخدم بين عدة أجهزة فوراً.
 * **`Supabase`**: بديل مجاني ومفتوح المصدر مبني على قاعدة بيانات علائقية قوية (**PostgreSQL**).
+
+
+---
+
+# 🛠️ الدليل العملي: طريقة كتابة الـ Widgets من الصفر إلى الاحتراف (من البداية للنهاية)
+
+---
+
+## 💡 أولاً: ما هي الـ Widget وكيف يفهمها Flutter؟
+
+في Flutter: **"كل شيء عبارة عن Widget" (Everything is a Widget)**.
+الشاشة، الزر، النص، المسافة، اللون، وحتى طريقة ترتيب العناصر داخل الصفحة كلها Widgets.
+
+عند كتابة أي Widget، يمر الكود بـ 3 طبقات داخل محرك Flutter:
+1. **Widget Tree**: كود التنسيق الذي تكتبه أنت (Blueprint / المخطط الهندسي).
+2. **Element Tree**: الهيكل الذي يربط التنسيق بحالة الشاشة في الذاكرة.
+3. **RenderObject Tree**: المحرك الرسومي الفعلي الذي يرسم البكسلات والألوان على شاشة الهاتف.
+
+---
+
+## 2️⃣ طريقة كتابة `StatelessWidget` خطوة بخطوة
+
+يُستخدم عندما تكون الواجهة **ثابتة** ولا تحتوي على متغيرات تتغير قيمتها أثناء بقاء المستخدم في الشاشة (مثل بطاقة لعرض معلومات، زر مخصص، شريط عنوان).
+
+### الهيكل القياسي لكتابة StatelessWidget:
+
+```dart
+// 1. استيراد المكتبة الأساسية
+import 'package:flutter/material.dart';
+
+// 2. تعريف الكلاس وتوريثه من StatelessWidget
+class CustomCard extends StatelessWidget {
+  
+  // 3. تعريف المتغيرات التي تستقبلها الويدجت (يجب أن تكون final دائماً)
+  final String title;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  // 4. إنشاء الـ Constructor مع استخدام super.key لتحسين الأداء
+  const CustomCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.onTap,
+  });
+
+  // 5. دالة build المسؤولة عن رسم الواجهة
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1D1E33),
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 40, color: const Color(0xFF00E5FF)),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 16, color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+### عناصر الكود الأساسية:
+1. **`super.key`**: معرف فريد يساعد Flutter في التمييز بين الويدجتس وتحسين سرعة إعادة الرسم.
+2. **`final`**: لأن الويدجت غير قابلة للتغيير (Immutable)، وكل مدخلاتها يجب أن تكون ثابتة بعد الإنشاء.
+3. **`BuildContext context`**: خريطة توضح موقع هذا الويدجت بالضبط داخل شجرة التطبيق (Widget Tree).
+
+---
+
+## 3️⃣ طريقة كتابة `StatefulWidget` ودورة حياتها الكاملة (Lifecycle)
+
+يُستخدم عندما تحتوي الشاشة على **بيانات متغيرة وتفاعلية** (مثل عداد، تبديل ألوان، حقل كتابة، شريط سحب).
+
+يتكون الـ `StatefulWidget` دائماً من **كلاسين اثنين**:
+1. الكلاس الأول (الـ Widget): يستقبل الإعدادات الثابتة ويُنشئ الحالة.
+2. الكلاس الثاني (الـ State): يحتوي على المتغيرات ودورة الحياة ودالة `setState()`.
+
+---
+
+### الكود الكامل مع دورة الحياة (Lifecycle):
+
+```dart
+import 'package:flutter/material.dart';
+
+// الكلاس الأول: تعريف الويدجت وطلب إنشاء الـ State
+class CounterPage extends StatefulWidget {
+  final String screenTitle;
+
+  const CounterPage({super.key, required this.screenTitle});
+
+  @override
+  State<CounterPage> createState() => _CounterPageState();
+}
+
+// الكلاس الثاني: إدارة الحالة والواجهة
+class _CounterPageState extends State<CounterPage> {
+  // 1. المتغيرات القابلة للتغيير (Mutable State)
+  int _counter = 0;
+  late TextEditingController _textController;
+
+  // 2. initState: تعمل مرة واحدة فقط عند ظهور الشاشة لأول مرة
+  @override
+  void initState() {
+    super.initState();
+    _textController = TextEditingController();
+    print('1. initState: تم فتح الشاشة وتهيئة المتغيرات');
+  }
+
+  // 3. didChangeDependencies: تعمل بعد initState مباشرة أو عند تغير Theme/Provider
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    print('2. didChangeDependencies: تم تحديث التبعيات');
+  }
+
+  // 4. دالة تعديل القيمة وتحديث الواجهة
+  void _increment() {
+    setState(() {
+      _counter++; // نعدل المتغير داخل setState لإخبار فلاتر بإعادة رسم الشاشة
+    });
+  }
+
+  // 5. دالة build: ترسم الشاشة، ويتم استدعاؤها كلما نفذنا setState()
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.screenTitle), // استخدام widget للوصول لمتغيرات الكلاس الأول
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Current Value:', style: TextStyle(fontSize: 18)),
+            Text(
+              '$_counter',
+              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _increment,
+              child: const Text('Increment (+)'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 6. dispose: تعمل عند إغلاق الشاشة نهائياً لمسح الكنترولرز وتفريغ الذاكرة
+  @override
+  void dispose() {
+    _textController.dispose(); // مسح الـ Controller لمنع تسريب الذاكرة (Memory Leak)
+    print('3. dispose: تم إغلاق الشاشة وتفريغ الذاكرة');
+    super.dispose();
+  }
+}
+```
+
+---
+
+## 🔄 مراحل دورة حياة الـ StatefulWidget (Lifecycle Summary):
+
+```text
+[إنشاء الشاشة]
+      ⬇
+1. createState()           ⬅ إنشاء كائن الحالة في الذاكرة
+      ⬇
+2. initState()             ⬅ تهيئة المتغيرات والاشتراكات لمرة واحدة
+      ⬇
+3. didChangeDependencies() ⬅ ربط الـ InheritedWidgets / الثيم
+      ⬇
+4. build()                 ⬅ رسم وتلوين عناصر الشاشة للمستخدم
+      ⬇ 
+   [عند حدوث تفاعل] ⬅ setState() ⬅ يعيد تشغيل build() فقط لتحديث الرقم!
+      ⬇
+5. deactivate()            ⬅ عند إزالة الشاشة مؤقتاً
+      ⬇
+6. dispose()               ⬅ الإغلاق النهائي للشاشة وتفريغ الذاكرة
+```
+
+---
+
+## 4️⃣ كيف تصنع Custom Reusable Widget (ويدجت مخصصة قابلة لإعادة الاستخدام)؟
+
+بدلاً من تكرار كود التصميم 5 مرات، نستخرجه في ملف مستقل بطريقة برمجية احترافية:
+
+### الخطوات الذهبية لصنع أي Custom Widget:
+1. **حدد الجزء المكرر**: (مثلاً بطاقة لها خلفية وإطار وأيقونة ونص).
+2. **حدد ما هو متغير وما هو ثابت**:
+   - الثابت: لون الخلفية، الحواف الدائرية، الظل.
+   - المتغير: النص، الأيقونة، ماذا يحدث عند الضغط (`onTap`).
+3. **أنشئ كلاس StatelessWidget جديد** واجعله يطلب هذه المتغيرات عبر الـ `Constructor`.
+4. **استخدم الـ Widget في شاشتك الرئيسية بسهولة**:
+
+```dart
+// في شاشتك الرئيسية:
+Row(
+  children: [
+    CustomCard(
+      title: 'Profile',
+      icon: Icons.person,
+      onTap: () => print('Profile clicked'),
+    ),
+    CustomCard(
+      title: 'Settings',
+      icon: Icons.settings,
+      onTap: () => print('Settings clicked'),
+    ),
+  ],
+)
+```
+
+---
+
+## ⚡ أفضل الممارسات عند كتابة الـ Widgets (Best Practices):
+
+1. **استخدم `const` دائماً**:
+   - وضع كلمة `const` قبل أي ويدجت ثابتة يجعل Flutter يحفظها في الذاكرة دون إعادة بنائها، مما يعطي تطبيقك سرعة 60/120 إطار في الثانية (60fps).
+2. **قسّم الواجهة لويدجتس صغيرة (Small Widgets)**:
+   - بدلاً من كتابة ملف شاشة به 600 سطر، قسّمه إلى عدة ويدجتس صغيرة منفصلة.
+3. **لا تضع عمليات ثقيلة داخل دالة `build()`**:
+   - دالة `build()` تتكرر باستمرار؛ لا تضع فيها استدعاء API أو قراءة من قاعدة بيانات، بل ضع ذلك في `initState()` أو داخل `Controller`.
+4. **تفريغ الموارد دائماً في `dispose()`**:
+   - أي `TextEditingController` أو `AnimationController` أو `StreamSubscription` يجب إغلاقه بـ `.dispose()` لحماية الهاتف من استهلاك الذاكرة العشوائية (RAM).
