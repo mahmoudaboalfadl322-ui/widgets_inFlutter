@@ -1,6 +1,7 @@
-# دليل الـ Widgets الشامل لتطبيق Daily Water Tracker 💧📱
+# دليل الـ Widgets الشامل لتطبيقات Flutter 📱✨
+### مع تطبيق عملي ونماذج برمجية على تطبيق (BMI & Health Tracker)
 
-تم إعداد هذا المستند كمرجع منظم وشامل لشرح جميع الـ **Widgets** المذكورة في تكليف المشروع (صفحات 9 و 10 و 11 من ملف التكليف)، مع توضيح وظيفة كل منها، ومكان استخدامها في الكود، وأمثلة عملية، والأسئلة المتوقعة في المناقشة الشفوية.
+تم إعداد هذا المستند كمرجع شامل ومنظم لجميع الـ **Widgets** والمفاهيم الأساسية في Flutter، مدعوماً بأمثلة عملية من تطبيق صحي تفاعلي (BMI & Fitness Tracker) لحساب مؤشر كتلة الجسم، مع شرح الـ **Provider & Controller** و **قواعد البيانات (Databases)**.
 
 ---
 
@@ -37,20 +38,21 @@
 
 ---
 
-## 🔍 الشرح التفصيلي لكل Widget مع أمثلة الكود
+## 🔍 الشرح التفصيلي لكل Widget مع أمثلة الكود (تطبيق BMI & Health Tracker)
 
 ---
 
 ### 1. `MaterialApp`
 * **وظيفته**: هو الـ Widget الجذري (Root Widget) لتطبيقات Flutter، يقوم بتهيئة التصميم (Material Design)، وتحديد شاشة البداية (`home`)، وضبط الثيم العام وتوجيه الصفحات.
-* **مكان استخدامه في مشروعنا**: في ملف `lib/main.dart` داخل دالة البناء في كلاس `MyApp`.
+* **مكان استخدامه**: في ملف `main.dart` لتشغيل التطبيق وتعيين الشاشة الأولى.
 * **مثال من الكود**:
 ```dart
 return MaterialApp(
   debugShowCheckedModeBanner: false,
-  title: 'Water Tracker',
+  title: 'BMI Tracker',
   theme: ThemeData.dark().copyWith(
-    scaffoldBackgroundColor: kBgColor,
+    scaffoldBackgroundColor: const Color(0xFF0A0E21),
+    primaryColor: const Color(0xFF00E5FF),
   ),
   home: const InputScreen(),
 );
@@ -59,12 +61,12 @@ return MaterialApp(
 ---
 
 ### 2. `Scaffold`
-* **وظيفته**: يوفر الهيكل التخطيطي القياسي لأي صفحة (يحتوي على مساحات مخصصة لـ `appBar`، و `body`، و `bottomNavigationBar`، وخلفية الصفحة `backgroundColor`).
-* **مكان استخدامه في مشروعنا**: كعنصر رئيسي في شاشتي التطبيق: `InputScreen` و `ResultScreen`.
+* **وظيفته**: يوفر الهيكل التخطيطي الأساسي لأي صفحة (يحتوي على مساحات مخصصة لـ `appBar`، و `body`، و `bottomNavigationBar`، وخلفية الصفحة `backgroundColor`).
+* **مكان استخدامه**: الهيكل الرئيسي لشاشة الإدخال وشاشة عرض النتيجة.
 * **مثال من الكود**:
 ```dart
 return Scaffold(
-  backgroundColor: kBgColor,
+  backgroundColor: const Color(0xFF0A0E21),
   appBar: AppBar(...),
   body: SafeArea(...),
 );
@@ -74,17 +76,17 @@ return Scaffold(
 
 ### 3. `AppBar`
 * **وظيفته**: الشريط العلوي الثابت في أعلى الشاشة، يعرض عنوان الصفحة، وزر الرجوع، وأيقونات مساعدة.
-* **مكان استخدامه في مشروعنا**: في أعلى شاشة الإدخال (`Water Tracker`) مع أيقونة الماء، وفي أعلى شاشة النتيجة (`Your Daily Water Intake`).
+* **مكان استخدامه**: لعرض عنوان التطبيق `BMI CALCULATOR` وزر الرجوع في شاشة النتيجة.
 * **مثال من الكود**:
 ```dart
 appBar: AppBar(
-  backgroundColor: kBgColor,
+  backgroundColor: const Color(0xFF0A0E21),
   title: const Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(Icons.water_drop, color: kAccentColor),
+      Icon(Icons.monitor_weight_outlined, color: Color(0xFF00E5FF)),
       SizedBox(width: 8),
-      Text('Water Tracker'),
+      Text('BMI CALCULATOR'),
     ],
   ),
   centerTitle: true,
@@ -95,7 +97,7 @@ appBar: AppBar(
 
 ### 4. `SafeArea`
 * **وظيفته**: يحمي محتوى التطبيق من التداخل مع حواف الهواتف الحديثة، مثل نوتش الكاميرا العلوية (Notch) أو شريط التنقل السفلي الخاص بنظام التشغيل.
-* **مكان استخدامه في مشروعنا**: يغلف محتوى الـ `body` في كل من الشاشة الأولى وشاشة النتيجة.
+* **مكان استخدامه**: يغلف محتوى الـ `body` في كل شاشات التطبيق لضمان ظهور كل العناصر داخل المساحة الآمنة.
 * **مثال من الكود**:
 ```dart
 body: SafeArea(
@@ -107,16 +109,16 @@ body: SafeArea(
 
 ### 5. `Container`
 * **وظيفته**: صندوق رسم وتنسيق متعدد المهام، يُستخدم لإعطاء خلفية ملونة، وحواف دائرية (`borderRadius`)، وحدود (`border`)، ومسافات داخلية (`padding`) وخارجية (`margin`).
-* **مكان استخدامه في مشروعنا**: بطاقات الجنس، بطاقة الـ Slider، بطاقة النتيجة الكبيرة، وحاوية إخلاء المسؤولية.
+* **مكان استخدامه**: في بطاقات اختيار الجنس، وبطاقة الطول، وبطاقة النتيجة الكبيرة.
 * **مثال من الكود**:
 ```dart
 Container(
   margin: const EdgeInsets.all(4.0),
   padding: const EdgeInsets.symmetric(vertical: 20.0),
   decoration: BoxDecoration(
-    color: isSelected ? kActiveCardColor : kInactiveCardColor,
+    color: isSelected ? const Color(0xFF1D1E33) : const Color(0xFF111328),
     borderRadius: BorderRadius.circular(12.0),
-    border: isSelected ? Border.all(color: kAccentColor, width: 2.0) : null,
+    border: isSelected ? Border.all(color: const Color(0xFF00E5FF), width: 2.0) : null,
   ),
   child: Column(...),
 )
@@ -126,14 +128,14 @@ Container(
 
 ### 6. `Column`
 * **وظيفته**: ترتيب مجموعة من العناصر رأسياً (فوق بعضها البعض من الأعلى إلى الأسفل).
-* **مكان استخدامه في مشروعنا**: في الشاشة الرئيسية لترتيب (بطاقات الجنس ⬅️ الـ Slider ⬅️ بطاقات الوزن/العمر ⬅️ زر الحساب).
+* **مكان استخدامه**: لترتيب أقسام الشاشة الرئيسية (بطاقات الجنس ⬅️ شريط الطول ⬅️ بطاقات الوزن والعمر ⬅️ زر الحساب).
 * **مثال من الكود**:
 ```dart
 Column(
   children: [
     Row(...),       // بطاقات الجنس
-    Container(...), // شريط النشاط
-    Row(...),       // الوزن والعمر
+    Container(...), // بطاقة شريط الطول
+    Row(...),       // بطاقات الوزن والعمر
   ],
 )
 ```
@@ -142,13 +144,13 @@ Column(
 
 ### 7. `Row`
 * **وظيفته**: ترتيب مجموعة من العناصر أفقياً (جنباً إلى جنب من اليسار إلى اليمين).
-* **مكان استخدامه في مشروعنا**: لوضع بطاقتي `Male` و `Female` بجانب بعضهما، وبطاقتي `Weight` و `Age`، وأزرار (+) و (-).
+* **مكان استخدامه**: لوضع بطاقتي `Male` و `Female` بجانب بعضهما، وبطاقتي `Weight` و `Age`، وأزرار (+) و (-).
 * **مثال من الكود**:
 ```dart
 Row(
   children: [
-    GenderCard(label: 'MALE', ...),
-    GenderCard(label: 'FEMALE', ...),
+    GenderCard(label: 'MALE', icon: Icons.male),
+    GenderCard(label: 'FEMALE', icon: Icons.female),
   ],
 )
 ```
@@ -156,8 +158,8 @@ Row(
 ---
 
 ### 8. `Expanded`
-* **وظيفته**: يجبر العنصر الداخلي على التمدد ليأخذ كل المساحة المتاحة في الـ `Row` أو `Column`. وإذا وضعنا اثنين `Expanded` في `Row` فسيتقاسمان العرض بنسبة 50% لكل منهما بالضبط.
-* **مكان استخدامه في مشروعنا**: داخل كلاس `GenderCard` وكلاس `CounterCard` لضمان أن تأخذ البطاقات نصف عرض الشاشة بالتساوي مهما اختلف حجم الهاتف.
+* **وظيفته**: يجبر العنصر الداخلي على التمدد ليأخذ كل المساحة المتاحة بالتساوي داخل `Row` أو `Column`.
+* **مكان استخدامه**: وضع بطاقتي الجنس وبطاقتي الوزن والعمر ليأخذ كل منهما 50% من عرض الشاشة مهما اختلف حجم الهاتف.
 * **مثال من الكود**:
 ```dart
 return Expanded(
@@ -168,21 +170,20 @@ return Expanded(
 ---
 
 ### 9. `Flexible`
-* **وظيفته**: يشبه `Expanded` لكنه يعطي العنصر مرونة للتمدد بدون إلزامه بملء المساحة كلها إن لم يكن محتواها بحاجة لها (يسمح للعنصر بأخذ حجمه الطبيعي بحد أقصى المساحة المتاحة).
-* **فائدته**: حماية النصوص الطويلة أو العناصر المرنة من كسر حدود الشاشة.
+* **وظيفته**: يمنح العنصر مرونة في التمدد دون إجباره على ملء المساحة بالكامل، مما يمنع انكسار النصوص الطويلة أو العناصر المرنة داخل الصفوف.
 
 ---
 
 ### 10. `Padding`
-* **وظيفته**: إضافة مسافة بيضاء داخلية فارغة تفصل بين إطار العنصر ومحتواه الداخلي.
-* **مكان استخدامه في مشروعنا**: حول أرقام الـ Slider (`0 h` و `8 h`)، وداخل شاشة النتيجة، وحول عناصر ملخص المدخلات.
+* **وظيفته**: إضافة مسافة داخلية فارغة تفصل بين إطار العنصر ومحتواه الداخلي.
+* **مكان استخدامه**: حول النصوص التوجيهية في شاشة النتيجة، وحول أرقام البداية والنهاية في شريط الـ Slider.
 * **مثال من الكود**:
 ```dart
 Padding(
   padding: const EdgeInsets.symmetric(horizontal: 16.0),
   child: Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [Text('0 h'), Text('8 h')],
+    children: [Text('120 cm'), Text('220 cm')],
   ),
 )
 ```
@@ -190,8 +191,8 @@ Padding(
 ---
 
 ### 11. `SizedBox`
-* **وظيفته**: إنشاء صندوق بأبعاد ثابتة محددة (`height` و `width`)، ويُستخدم كأبسط وأفضل طريقة لوضع فواصل ومسافات فارغة بين العناصر.
-* **مكان استخدامه في مشروعنا**: لعمل فراغ رأسي بين البطاقات (`SizedBox(height: 12)`) أو أفقي بين الأزرار (`SizedBox(width: 8)`).
+* **وظيفته**: إنشاء صندوق بأبعاد ثابتة محددة (`height` و `width`)، ويُستخدم كأبسط وأفضل طريقة لعمل فواصل ومسافات فارغة بين العناصر.
+* **مكان استخدامه**: لعمل مسافة رأسية بين البطاقات (`SizedBox(height: 12)`).
 * **مثال من الكود**:
 ```dart
 const SizedBox(height: 12);
@@ -200,14 +201,14 @@ const SizedBox(height: 12);
 ---
 
 ### 12. `Text`
-* **وظيفته**: عرض النصوص على الشاشة وتحديد مواصفاتها عبر خاصية `style: TextStyle(...)` مثل الحجم واللون والسمك ومحاذاة النص `textAlign`.
-* **مكان استخدامه في مشروعنا**: في كل مكان لعرض العناوين والأرقام، مثل `'3.56 L / Day'` ونصوص التوجيه.
+* **وظيفته**: عرض النصوص على الشاشة وتحديد خصائص الخط عبر خاصية `style: TextStyle(...)`.
+* **مكان استخدامه**: لعرض قيمة المؤشر مثل `'22.4'`, ورسالة التقييم `'NORMAL WEIGHT'`.
 * **مثال من الكود**:
 ```dart
 Text(
-  '${litres.toStringAsFixed(2)} L / Day',
+  bmiResult.toStringAsFixed(1),
   style: const TextStyle(
-    fontSize: 38,
+    fontSize: 54,
     fontWeight: FontWeight.bold,
     color: Colors.white,
   ),
@@ -217,38 +218,36 @@ Text(
 ---
 
 ### 13. `Icon`
-* **وظيفته**: رسم أيقونة متجهية (Vector Icon) جاهزة من مكتبة فلاتر مع إمكانية تعديل حجمها ولونها بسهولة.
-* **مكان استخدامه في مشروعنا**: قطرة الماء `Icons.water_drop`، وأيقونات الجنس `Icons.male` و `Icons.female`، وعلامات الزيادة والنقصان `Icons.add` و `Icons.remove`.
+* **وظيفته**: رسم أيقونة جاهزة من مكتبة فلاتر مع سهولة تعديل حجمها ولونها.
+* **مكان استخدامه**: أيقونات `Icons.male` و `Icons.female`، وأيقونات الزيادة والنقصان `Icons.add` و `Icons.remove`.
 * **مثال من الكود**:
 ```dart
 Icon(
-  Icons.water_drop,
+  Icons.favorite_rounded,
   size: 48,
-  color: kAccentColor,
+  color: Color(0xFF00E5FF),
 )
 ```
 
 ---
 
 ### 14. `Card`
-* **وظيفته**: ويدجت جاهز من Material Design يقدم بطاقة بخلفية ملونة مع حواف وظلال افتراضية (Elevation).
-* **علاقته بـ Container**: يعتبر بديلاً سريعاً لـ `Container`، ولكن تم تفضيل `Container` في مشروعنا لإعطاء تحكم كامل ودقيق في ألوان الحدود النشطة (`Border.all`) والظلال.
+* **وظيفته**: ويدجت جاهز يقدم بطاقة ذات حواف دائرية وظلال مسبقة (بديل سريع لـ `Container`).
 
 ---
 
 ### 15. `Slider`
-* **وظيفته**: شريط تمرير تفاعلي يسمح للمستخدم باختيار رقم بسلاسة بين حد أدنى (`min`) وحد أقصى (`max`).
-* **مكان استخدامه في مشروعنا**: لتحديد ساعات النشاط الرياضي اليومية من 0 إلى 8 ساعات مع تقسيمها إلى 8 خطوات (`divisions: 8`).
+* **وظيفته**: شريط سحب تفاعلي لاختيار قيمة محددة بين حد أدنى (`min`) وحد أقصى (`max`).
+* **مكان استخدامه**: لاختيار الطول بالسنتيمتر من 120 cm إلى 220 cm.
 * **مثال من الكود**:
 ```dart
 Slider(
-  value: activityHours,
-  min: 0,
-  max: 8,
-  divisions: 8,
-  onChanged: (val) {
+  value: height.toDouble(),
+  min: 120.0,
+  max: 220.0,
+  onChanged: (double newValue) {
     setState(() {
-      activityHours = val;
+      height = newValue.round();
     });
   },
 )
@@ -257,15 +256,14 @@ Slider(
 ---
 
 ### 16. `SliderTheme`
-* **وظيفته**: غلاف مخصص يسمح بتعديل ألوان وأحجام كل تفاصيل الـ `Slider` (مثل مقبض السحب `thumbColor`، والمسار النشط `activeTrackColor`، والوهج الشفاف عند اللمس `overlayColor`).
-* **مكان استخدامه في مشروعنا**: لإعطاء مقبض الـ Slider والمسار اللون السمائي المشع (`#00E5FF`).
+* **وظيفته**: غلاف مخصص لتعديل شكل وألوان ومقبض شريط الـ `Slider`.
+* **مكان استخدامه**: لجعل مقبض السحب والمسار النشط باللون السماوي المشع (`#00E5FF`).
 * **مثال من الكود**:
 ```dart
 SliderTheme(
   data: SliderTheme.of(context).copyWith(
-    activeTrackColor: kAccentColor,
-    inactiveTrackColor: Colors.white24,
-    thumbColor: kAccentColor,
+    activeTrackColor: const Color(0xFF00E5FF),
+    thumbColor: const Color(0xFF00E5FF),
     overlayColor: const Color(0x3300E5FF),
     trackHeight: 4.0,
   ),
@@ -276,8 +274,8 @@ SliderTheme(
 ---
 
 ### 17. `GestureDetector`
-* **وظيفته**: يتعرف على حركات وإيماءات اللمس من المستخدم (مثل النقرة الواحدة `onTap`، والنقرة المزدوجة `onDoubleTap`، والضغط المطول `onLongPress`) على أي عنصر ليس زراً في الأصل.
-* **مكان استخدامه في مشروعنا**: حول بطاقتي `MALE` و `FEMALE` لتحويلهما إلى بطاقات تفاعلية يتم اختيارها عند الضغط.
+* **وظيفته**: التقاط حركات وإيماءات اللمس من المستخدم (مثل النقرة الواحدة `onTap`) على أي عنصر ليس زراً في الأصل.
+* **مكان استخدامه**: حول بطاقتي `MALE` و `FEMALE` لاختيار إحداهما عند الضغط.
 * **مثال من الكود**:
 ```dart
 GestureDetector(
@@ -293,33 +291,32 @@ GestureDetector(
 ---
 
 ### 18. `InkWell`
-* **وظيفته**: يشبه `GestureDetector` تماماً في التقاط الضغط `onTap`، ولكنه يضيف تأثير موجة مائية مرئية (Ripple / Splash Effect) عند لمس العنصر.
-* **ملاحظة**: يمكن استبدال `GestureDetector` به بسهولة لإعطاء تفاعل ملموس إضافي.
+* **وظيفته**: يشبه `GestureDetector` في التقاط النقرات، ولكنه يضيف تأثيراً موجياً متحركاً (Ripple Effect) عند لمس البطاقة.
 
 ---
 
 ### 19. `ElevatedButton`
-* **وظيفته**: الزر الأساسي المرتفع في Material Design، له خلفية ملونة وتأثير ظل وشكل مخصص.
-* **مكان استخدامه في مشروعنا**: الزر العريض في أسفل الشاشتين: زر `Calculate Water Intake` وزر `Re-calculate`.
+* **وظيفته**: زر بارز ومرتفع للعمليات الأساسية.
+* **مكان استخدامه**: الزر العريض أسفل الشاشات: `CALCULATE BMI` وزر `RE-CALCULATE`.
 * **مثال من الكود**:
 ```dart
 ElevatedButton(
   style: ElevatedButton.styleFrom(
-    backgroundColor: kAccentColor,
+    backgroundColor: const Color(0xFF00E5FF),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
     ),
   ),
-  onPressed: onTap,
-  child: Text(title, style: ...),
+  onPressed: onCalculate,
+  child: const Text('CALCULATE BMI'),
 )
 ```
 
 ---
 
 ### 20. `IconButton / RawMaterialButton`
-* **وظيفته**: زر يحتوي على أيقونة. استُخدم `RawMaterialButton` تحديداً لأنه يتيح صنع زر دائري الشكل بالكامل بحجم دقيق وثابت دون التقيد بهيكل الزر المستطيل.
-* **مكان استخدامه في مشروعنا**: أزرار الزيادة والنقصان (+) و (-) داخل بطاقتي الوزن والعمر في `counter_card.dart`.
+* **وظيفته**: زر يحتوي على أيقونة. استُخدم `RawMaterialButton` لإنشاء أزرار دائرية مخصصة بحجم دقيق وثابت.
+* **مكان استخدامه**: أزرار (+) و (-) لتعديل الوزن والعمر.
 * **مثال من الكود**:
 ```dart
 RawMaterialButton(
@@ -335,15 +332,14 @@ RawMaterialButton(
 ---
 
 ### 21. `Center`
-* **وظيفته**: يقوم بمحاذاة العنصر التابع له ليقع بالضبط في منتصف المساحة المتاحة رأسياً وأفقياً.
-* **مكان استخدامه في مشروعنا**: لتوسيط النصوص والأيقونات داخل البطاقات وشريط العنوان.
+* **وظيفته**: محاذاة العنصر ليقع بالضبط في منتصف المساحة المتاحة رأسياً وأفقياً.
+* **مكان استخدامه**: لتوسيط النصوص والأرقام داخل البطاقات.
 
 ---
 
 ### 22. `SingleChildScrollView`
-* **وظيفته**: يحول المحتوى الرأسي أو الأفقي إلى قائمة قابلة للتمرير (Scrollable).
-* **أهميته القصوى في التقييم**: هذا الـ Widget هو الحامي الأول من ظهور خطأ الشاشة الشهير **(RenderFlex overflowed)** أو الخطوط الصفراء والسوداء عند تشغيل التطبيق على هواتف ذات شاشات صغيرة أو عند تدوير الشاشة.
-* **مكان استخدامه في مشروعنا**: يغلف الـ `Column` الرئيسي في الشاشة الأولى وشاشة النتيجة.
+* **وظيفته**: يتيح تمرير المحتوى (Scroll) رأسياً أو أفقياً لمنع ظهور خطأ المساحة الشهير **(RenderFlex overflow)** على الهواتف الصغيرة أو عند تدوير الشاشة.
+* **مكان استخدامه**: يغلف الـ `Column` الرئيسي في شاشات التطبيق.
 * **مثال من الكود**:
 ```dart
 SingleChildScrollView(
@@ -356,23 +352,21 @@ SingleChildScrollView(
 
 ### 23. `Navigator (push / pop)`
 * **وظيفته**: نظام إدارة الشاشات والملاحة في Flutter الذي يعمل بنظام المكدس (Stack):
-  - `Navigator.push()`: إضافة شاشة جديدة فوق الشاشة الحالية مع تمرير البيانات إليها.
-  - `Navigator.pop()`: إزالة الشاشة الحالية والعودة للشاشة السابقة.
-* **مكان استخدامه في مشروعنا**:
-  - `Navigator.push`: عند الضغط على زر الحساب للانتقال من `InputScreen` إلى `ResultScreen`.
-  - `Navigator.pop`: عند الضغط على زر `Re-calculate` للعودة للشاشة الأولى.
+  - `Navigator.push()`: فتح شاشة جديدة فوق الشاشة الحالية وتمرير البيانات إليها.
+  - `Navigator.pop()`: إغلاق الشاشة الحالية والرجوع للشاشة السابقة.
+* **مكان استخدامه**:
+  - `push`: الانتقال من شاشة الإدخال إلى شاشة النتيجة مع تمرير قيمة الـ BMI.
+  - `pop`: عند الضغط على زر `RE-CALCULATE` للعودة للشاشة الأولى.
 * **مثال من الكود**:
 ```dart
-// الانتقال وتمرير البيانات:
+// الانتقال لشاشة النتيجة:
 Navigator.push(
   context,
   MaterialPageRoute(
     builder: (context) => ResultScreen(
-      litres: litres,
-      weight: weight,
-      age: age,
-      activityHours: activityHours,
-      gender: selectedGender == 'male' ? 'Male' : 'Female',
+      bmi: bmiResult,
+      resultText: 'NORMAL',
+      interpretation: 'You have a healthy body weight. Keep it up!',
     ),
   ),
 );
@@ -384,16 +378,14 @@ Navigator.pop(context);
 ---
 
 ### 24. `StatelessWidget`
-* **وظيفته**: ويدجت "عديم الحالة"، يُبنى مرة واحدة فقط ولا يحتوي على أي متغيرات قابلة للتغيير بعد إنشائه. يتميز بأنه سريع جداً وخفيف في استهلاك الذاكرة.
-* **مكان استخدامه في مشروعنا**:
-  - `ResultScreen`: لأنها تستقبل البيانات الجاهزة فقط وتعرضها دون تعديل.
-  - `GenderCard`، `CounterCard`، `BottomButton`: لأنها مجرد قوالب تصميمية تستقبل دوال وقيم جاهزة من الشاشة الأم.
+* **وظيفته**: ويدجت "عديم الحالة"، يُبنى مرة واحدة ولا تتغير بياناته داخلياً بعد إنشائه. يتميز بأنه سريع جداً وخفيف في استهلاك الذاكرة.
+* **مكان استخدامه**: في شاشة عرض النتيجة `ResultScreen` والبطاقات المساعدة، لأنها فقط تعرض بيانات مرسلة إليها.
 
 ---
 
 ### 25. `StatefulWidget`
-* **وظيفته**: ويدجت "ذو حالة"، يحتوي على بيانات قابلة للتغيير والتحديث أثناء استخدام التطبيق، ويعتمد على استدعاء دالة `setState()` لإعلام Flutter بضرورة إعادة بناء الواجهة (`rebuild`) لعكس التغيير الجديد على الشاشة فوراً.
-* **مكان استخدامه في مشروعنا**: شاشة الإدخال `InputScreen` (لأن المستخدم يغير باستمرار: اختيار الجنس، ساعات النشاط عبر الـ Slider، وقيم العداد للوزن والعمر).
+* **وظيفته**: ويدجت "ذو حالة"، يحتوي على متغيرات تتغير أثناء استخدام التطبيق، وتُحدث الواجهة باستدعاء دالة `setState()`.
+* **مكان استخدامه**: في شاشة الإدخال `InputScreen` (تعديل الطول بالسلايدر، والوزن، والعمر، واختيار الجنس).
 * **مثال من الكود**:
 ```dart
 setState(() {
@@ -404,31 +396,13 @@ setState(() {
 ---
 
 ### 26. `ThemeData`
-* **وظيفته**: تعريف وإعداد المظهر اللوني والخطوط الافتراضية للتطبيق بأكمله من مكان واحد، مما يضمن اتساق التصميم وسهولة تغييره.
-* **مكان استخدامه في مشروعنا**: داخل `MaterialApp` لتفعيل الوضع الليلي `ThemeData.dark()` وضبط لون الخلفية الداكنة `#0A0E21`.
+* **وظيفته**: توحيد المظهر اللوني والخطوط في كامل التطبيق من مكان واحد في `main.dart`.
 * **مثال من الكود**:
 ```dart
 theme: ThemeData.dark().copyWith(
-  scaffoldBackgroundColor: kBgColor,
+  scaffoldBackgroundColor: const Color(0xFF0A0E21),
 )
 ```
-
----
-
-## 🎯 أهم الأسئلة المحتملة في المناقشة الشفوية وكيفية الإجابة عليها:
-
-1. **س: ما الفرق بين `StatefulWidget` و `StatelessWidget`؟ ولماذا اخترت كلاً منهما؟**
-   * **الإجابة**: الـ `StatelessWidget` ويدجت ثابت لا تتغير حالته بعد بنائه واستخدمته في `ResultScreen` والبطاقات لأنها تستقبل قيم ثابتة فقط للعرض. بينما `StatefulWidget` يمتلك حالة داخلية تتغير مع الوقت باستخدام `setState()`، واستخدمته في `InputScreen` لأن المستخدم يعدل المدخلات (الوزن، العمر، السلايدر، الجنس) والواجهة تحتاج للتحديث مع كل ضغطة.
-
-2. **س: كيف حميت التطبيق من مشكلة الـ `RenderFlex overflow`؟**
-   * **الإجابة**: باستخدام `SingleChildScrollView` حول الـ `Column` الرئيسي ليتيح للمستخدم التمرير عند صغر حجم الشاشة، واستخدام `Expanded` داخل الـ `Rows` لتوزيع المساحات بالتساوي وبنسب مرنة بدلاً من استخدام أبعاد ثابتة كبيرة.
-
-3. **س: كيف تم تمرير البيانات بين الشاشة الأولى وشاشة النتيجة؟**
-   * **الإجابة**: عن طريق الـ `Constructor` الخاص بـ `ResultScreen` أثناء استدعاء دالة `Navigator.push(context, MaterialPageRoute(...))`.
-
-4. **س: كيف عاد زر `Re-calculate` للشاشة الأولى مع الحفاظ على مدخلات المستخدم؟**
-   * **الإجابة**: استدعينا `Navigator.pop(context)`، والتي تقوم بحذف شاشة النتيجة من المكدس (Stack) والعودة للشاشة السابقة التي لا تزال محتفظة بحالتها ومتغيراتها الأصلية في الذاكرة.
-
 
 ---
 
@@ -436,79 +410,42 @@ theme: ThemeData.dark().copyWith(
 
 ---
 
-## 1️⃣ ما هو الـ Controller في Flutter؟
-
-### الفكرة ببساطة:
-الـ **Controller** (المتحكم) هو كائن (Object) أو كلاس مستقل مسؤول عن **فصل منطق البيانات (Business Logic) عن واجهة المستخدم (UI)**، والتحكم في سلوك ويدجت معينة أو حالة الشاشة.
-
-بدلاً من أن نكتب المتغيرات والحسابات داخل كلاس الشاشة (`StatefulWidget`)، ننقلها داخل **Controller**.
+## 1️⃣ ما هو الـ Controller؟
+الـ **Controller** هو كلاس مستقل مسؤوليته **فصل منطق البيانات والعمليات الحسابية عن واجهة المستخدم (UI)**.
+بدلاً من أن نكتب المتغيرات والحسابات داخل كود الشاشة، ننقلها داخل Controller مستقل (مثل `BmiController`).
 
 ---
 
-### أنواع الـ Controllers في Flutter:
-
-#### أ) Controllers مدمجة جاهزة داخل فلاتر (Built-in Controllers):
-1. **`TextEditingController`**: للتحكم في حقول الإدخال النصية (`TextField`) وقراءة ما يكتبه المستخدم أو مسحه.
-2. **`ScrollController`**: للتحكم في القوائم المنسدلة والتمرير والنزول لأسفل القائمة برمجياً.
-3. **`PageController`**: للتحكم في التنقل بين الصفحات في `PageView`.
-4. **`AnimationController`**: للتحكم في بدء وإيقاف وتكرار الحركات والأنيميشن.
-
-#### ب) Controller مخصص لإدارة الحالة (Custom State Controller):
-كلاس نكتبه بأنفسنا لتخزين بيانات التطبيق ودوال التعديل عليها، مثل إنشاء كلاس `WaterController` بدلاً من كتابة كل شيء داخل الشاشة.
+## 2️⃣ ما هو الـ Provider؟
+الـ **Provider** هو أشهر مكتبة لإدارة الحالة (**State Management**) في Flutter.
+* يحل مشكلة تمرير البيانات يدوياً بين الشاشات المتعددة (**Prop Drilling**).
+* يحل مشكلة إعادة بناء الشاشة كلها عند كل تغيير عبر `setState()`، حيث يقوم بتحديث الويدجت المستمع فقط.
 
 ---
 
-## 2️⃣ ما هو الـ Provider في Flutter؟
+## 3️⃣ مثال عملي: كود `BmiController` مع `ChangeNotifier`:
 
-### الفكرة ببساطة:
-الـ **Provider** هو أشهر مكتبة لإدارة الحالة (**State Management**) في Flutter، وهو مدعوم وموصى به رسمياً من فريق فلاتر و Google.
-
-### ما المشكلة التي يحلها Provider؟
-في التطبيقات العادية بدون Provider:
-* إذا أردت تمرير بيانات من الشاشة الأولى للشاشة الثالثة، ستضطر لتمريرها يدوياً عبر كل الشاشات والـ Widgets الوسيطة (**Prop Drilling**).
-* عند استدعاء `setState()` يتم إعادة بناء (Rebuild) الشاشة بأكملها بكل أزرارها وبطاقاتها حتى لو تغير رقم واحد فقط.
-
-**حل الـ Provider:**
-يعمل مثل **"خزان مياه مركزي"** في أعلى شجرة التطبيق (Widget Tree). أي Widget في أي مكان بالتطبيق تستطيع سحب البيانات منه مباشرة أو الاستماع للتغييرات بدون إعادة بناء الشاشة كلها!
-
----
-
-## 3️⃣ المفاهيم الأساسية الثلاثة في Provider:
-
-| المفهوم | الوظيفة | التشبيه |
-|:---|:---|:---|
-| **`ChangeNotifier`** | كلاس يحتوي على البيانات والدوال، ويطلق تنبيهاً عند أي تعديل عبر `notifyListeners()` | **محطة الراديو** (تبث الأخبار عند حدوث جديد) |
-| **`ChangeNotifierProvider`** | ويدجت يوضع في مكان عالي بالشجرة ليجعل الـ Controller متاحاً للجميع | **برج الإرسال** (يوصل الإشارة للمستمعين) |
-| **`Consumer` أو `context.watch()`** | ويدجت يستمع للبيانات ويعيد رسم نفسه فقط عندما تتغير | **جهاز الراديو** (يستقبل التحديث ويغير الصوت) |
-
----
-
-## 4️⃣ مثال عملي: تحويل تطبيق Water Tracker إلى Controller + Provider
-
-### الخطوة 1: إنشاء الـ Controller كـ `ChangeNotifier`:
 ```dart
 import 'package:flutter/material.dart';
 
-class WaterController extends ChangeNotifier {
-  // البيانات (State)
+class BmiController extends ChangeNotifier {
   String? selectedGender;
-  double activityHours = 1.0;
-  int weight = 60;
-  int age = 20;
+  int height = 170;
+  int weight = 65;
+  int age = 22;
 
-  // دوال تعديل البيانات
   void setGender(String gender) {
     selectedGender = gender;
-    notifyListeners(); // إعلام الواجهة بحدوث تغيير لتحديث نفسها
+    notifyListeners(); // إعلام الويدجتس المستمعة بالتحديث
   }
 
-  void setActivity(double hours) {
-    activityHours = hours;
+  void setHeight(int newHeight) {
+    height = newHeight;
     notifyListeners();
   }
 
   void incrementWeight() {
-    if (weight < 200) {
+    if (weight < 250) {
       weight++;
       notifyListeners();
     }
@@ -521,71 +458,43 @@ class WaterController extends ChangeNotifier {
     }
   }
 
-  // دالة الحساب
-  double get totalLitres {
-    int baseMl = weight * 35;
-    int activityMl = (activityHours * 250).round();
-    return (baseMl + activityMl) / 1000;
+  // حساب مؤشر كتلة الجسم (BMI = weight / (height/100)^2)
+  double get bmi {
+    double heightInMeters = height / 100.0;
+    return weight / (heightInMeters * heightInMeters);
+  }
+
+  String get resultText {
+    if (bmi >= 25) return 'OVERWEIGHT';
+    if (bmi > 18.5) return 'NORMAL';
+    return 'UNDERWEIGHT';
   }
 }
 ```
 
----
-
-### الخطوة 2: توفير الـ Controller للتطبيق عبر `ChangeNotifierProvider` في `main.dart`:
+### استخدام الـ Provider في الواجهة:
 ```dart
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => WaterController(),
-      child: const MyApp(),
-    ),
-  );
-}
-```
+// 1. تسجيل الـ Provider في أعلى شجرة التطبيق (main.dart):
+ChangeNotifierProvider(
+  create: (context) => BmiController(),
+  child: const MyApp(),
+)
 
----
-
-### الخطوة 3: استهلاك البيانات في الواجهة بكل سهولة:
-
-#### الطريقة الأولى (باستخدام `Consumer`):
-يعيد بناء هذا الجزء فقط من الشاشة دون لمس باقي الصفحة:
-```dart
-Consumer<WaterController>(
+// 2. قراءة القيمة في الشاشة (تحديث هذا الجزء فقط):
+Consumer<BmiController>(
   builder: (context, controller, child) {
-    return Text(
-      '${controller.weight} kg',
-      style: const TextStyle(fontSize: 36),
-    );
+    return Text('${controller.weight} kg');
   },
 )
-```
 
-#### الطريقة الثانية (باستخدام `context.read` و `context.watch`):
-* **`context.watch<WaterController>()`**: للقراءة والاستماع (تحديث الواجهة عند التغيير).
-* **`context.read<WaterController>()`**: لتنفيذ دالة بدون الاستماع (مثالي للأزرار):
-```dart
-// في زر الزيادة (+):
+// 3. استدعاء الدالة عند الضغط على زر (+):
 RawMaterialButton(
   onPressed: () {
-    context.read<WaterController>().incrementWeight();
+    context.read<BmiController>().incrementWeight();
   },
   child: const Icon(Icons.add),
-);
+)
 ```
-
----
-
-## 5️⃣ مقارنة سريعة: `setState` مقابل `Provider + Controller`
-
-| وجه المقارنة | `setState()` | `Provider + Controller` |
-|:---|:---|:---|
-| **مكان البيانات والمنطق** | مدمج داخل كلاس الـ Widget (`UI`) | مفصول تماماً في كلاس `Controller` مستقل |
-| **إعادة بناء الواجهة (Rebuild)** | تعيد بناء الـ Widget بالكامل | تعيد بناء الـ Widget المستمع فقط بدقة |
-| **مشاركة البيانات بين الشاشات** | صعبة وتتطلب تمرير يدوي في الـ Constructor | سهلة جداً والبيانات متاحة في أي شاشة |
-| **إمكانية اختبار الكود (Testing)** | صعبة لاختلاط المنطق بالواجهة | سهلة جداً لأن الـ Controller كلاس Dart خالص |
-| **المناسبة للمشاريع** | المشاريع الصغيرة والبسيطة | المشاريع المتوسطة والكبيرة والاحترافية |
-
 
 ---
 
@@ -593,118 +502,40 @@ RawMaterialButton(
 
 ---
 
-## 📌 مقدمة: ما هي قواعد البيانات في Flutter؟
+## 1️⃣ قواعد البيانات المحلية (Local Databases - أوفلاين)
+تعمل مباشرة على هاتف المستخدم بدون إنترنت:
 
-قاعدة البيانات هي المكان المخصص **لحفظ واسترجاع بيانات المستخدم** بشكل دائم حتى بعد إغلاق التطبيق أو إعادة تشغيل الهاتف.
-
-تنقسم قواعد البيانات في Flutter إلى نوعين رئيسيين:
-1. **قواعد بيانات محلية (Local / Offline Databases)**: تُخزَّن البيانات مباشرة داخل ذاكرة هاتف المستخدم وتعمل بدون إنترنت.
-2. **قواعد بيانات سحابية (Remote / Cloud Databases)**: تُخزَّن البيانات على خوادم سحابية (Servers) وتتطلب اتصالاً بالإنترنت لمزامنتها ومشاركتها بين الأجهزة.
-
----
-
-## 1️⃣ أنواع قواعد البيانات المحلية (Local Databases)
-
-### أ) `SharedPreferences` (لتخزين البيانات البسيطة)
-* **فكرته**: يعتمد على نظام **المفتاح والقيمة (Key-Value Pairs)**.
-* **الاستخدام المثالي**:
-  - حفظ إعدادات المستخدم (تفعيل الوضع الليلي Dark Mode، اختيار لغة التطبيق).
-  - حفظ آخر مدخلات (مثل آخر وزن مسجل في تطبيق Water Tracker).
-  - حفظ حالة تسجيل الدخول وتوكن الأمان (Login Token).
-* **مثال كود**:
+### أ) `SharedPreferences` (Key-Value)
+* **استخدامها**: لتخزين قيم بسيطة مثل إعدادات المستخدم (الوضع الليلي Dark Mode، اختيار وحدة الطول cm أو inch، توكن الدخول).
 ```dart
-// حفظ قيمة
 final prefs = await SharedPreferences.getInstance();
-await prefs.setInt('weight', 70);
-
-// قراءة القيمة
-int? weight = prefs.getInt('weight'); // يعيد 70
+await prefs.setInt('last_height', 175);
+int? lastHeight = prefs.getInt('last_height');
 ```
 
----
-
-### ب) `sqflite` (قاعدة بيانات علائقية كاملة - SQLite)
-* **فكرتها**: النسخة الرسمية لقواعد بيانات **SQLite** في Flutter، وتعتمد على جداول علائقية (Tables) وأعمدة وصفوف، وتدعم لغة الاستعلامات SQL كاملة (`SELECT`, `INSERT`, `UPDATE`, `DELETE`).
-* **الاستخدام المثالي**:
-  - البيانات المرتبطة ببعضها (Relational Data).
-  - التطبيقات الكبيرة التي تحتاج استعلامات معقدة وبحثاً مفهرساً.
-* **مثال كود لإنشاء جدول وإضافة سجل يومي للماء**:
+### ب) `Hive` (NoSQL فائقة السرعة)
+* **استخدامها**: تخزين كائنات وسجلات بدون أكواد SQL، وتعتمد على نظام الصناديق (`Boxes`).
 ```dart
-// 1. فتح وإنشاء قاعدة البيانات
-Database db = await openDatabase(
-  'water_tracker.db',
-  version: 1,
-  onCreate: (db, version) async {
-    await db.execute('''
-      CREATE TABLE water_records (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        litres REAL,
-        date TEXT
-      )
-    ''');
-  },
-);
-
-// 2. إدخال سجل جديد (Create)
-await db.insert('water_records', {
-  'litres': 2.95,
-  'date': '2026-10-29',
-});
-
-// 3. قراءة السجلات (Read)
-List<Map<String, dynamic>> records = await db.query('water_records');
+var box = await Hive.openBox('fitnessBox');
+box.put('today_bmi', 22.4);
+double savedBmi = box.get('today_bmi', defaultValue: 0.0);
 ```
 
----
-
-### ج) `Hive` (قاعدة بيانات NoSQL فائقة السرعة)
-* **فكرتها**: قاعدة بيانات NoSQL خفيفة جداً ومكتوبة بلغة Dart بالكامل، تخزن البيانات داخل صناديق (**Boxes**) على شكل كائنات ومفاتيح.
-* **مميزاتها**:
-  - أسرع بكثير من SQLite في القراءة والكتابة.
-  - لا تحتاج لكتابة أكواد SQL.
-  - تدعم العمل أوفلاين وتخزين كائنات Dart المخصصة (Custom Objects).
-* **مثال كود**:
+### ج) `sqflite` (قواعد بيانات علائقية SQL كاملة)
+* **استخدامها**: للتطبيقات التي تحتوي على جداول وتقارير وسجلات متعددة.
 ```dart
-// فتح الصندوق
-var box = await Hive.openBox('waterBox');
-
-// إضافة وتخزين
-box.put('today_intake', 3.56);
-
-// قراءة القيمة
-double intake = box.get('today_intake', defaultValue: 0.0);
+Database db = await openDatabase('fitness.db');
+await db.execute('''
+  CREATE TABLE history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    bmi REAL,
+    date TEXT
+  )
+''');
 ```
 
 ---
 
-## 2️⃣ قواعد البيانات السحابية (Cloud / Remote Databases)
-
-### أ) `Firebase Cloud Firestore`
-* **فكرتها**: قاعدة بيانات سحابية NoSQL تقدمها Google، تعتمد على المستندات والمجموعات (Documents & Collections).
-* **أهم ميزاتها**:
-  - **Realtime Sync**: تحديث البيانات لحظياً على شاشات جميع المستخدمين فور تعديلها.
-  - سهولة الربط مع خدمات التوثيق (Firebase Authentication) وتخزين الصور.
-
-### ب) `Supabase`
-* **فكرتها**: بديل مجاني ومفتوح المصدر لـ Firebase، ولكنه مبني على قاعدة بيانات علائقية قوية (**PostgreSQL**).
-
----
-
-## 3️⃣ العمليات الأساسية في أي قاعدة بيانات (CRUD)
-
-كل قواعد البيانات تدور حول 4 عمليات أساسية تسمى **CRUD**:
-1. **Create (إنشاء/إضافة)**: إضافة سجل جديد (مثل حفظ قراءة ماء جديدة).
-2. **Read (قراءة/استرجاع)**: جلب وعرض البيانات المحفوظة على الشاشة.
-3. **Update (تعديل)**: تحديث بيانات مسجلة مسبقاً (مثل تعديل الوزن).
-4. **Delete (حذف)**: مسح سجل أو تصفير البيانات.
-
----
-
-## 📊 جدول مقارنة شامل: متى تختار كل قاعدة بيانات؟
-
-| قاعدة البيانات | نوعها | متى تستخدمها؟ | الصعوبة | السرعة |
-|:---|:---:|:---|:---:|:---:|
-| **`SharedPreferences`** | Key-Value محلي | لإعدادات التطبيق وتوكن الدخول وحفظ متغيرات بسيطة | سهل جداً | سريعة جداً |
-| **`Hive`** | NoSQL محلي | لتخزين كائنات وقوائم بيانات محلية بدون تعقيد SQL | سهل | فائقة السرعة ⚡ |
-| **`sqflite`** | SQL علائقي محلي | للبيانات الضخمة والتقارير والربط بين جداول متعددة | متوسط | ممتازة |
-| **`Firebase Firestore`**| NoSQL سحابي | لتطبيقات الشات، والمزامنة الفورية، ومشاركة البيانات | متوسط | تعتمد على الإنترنت |
+## 2️⃣ قواعد البيانات السحابية (Cloud Databases - أونلاين)
+* **`Firebase Cloud Firestore`**: قاعدة بيانات NoSQL سحابية من Google، ميزتها الكبرى هي المزامنة اللحظية (Realtime Sync) لبيانات المستخدم بين عدة أجهزة فوراً.
+* **`Supabase`**: بديل مجاني ومفتوح المصدر مبني على قاعدة بيانات علائقية قوية (**PostgreSQL**).
