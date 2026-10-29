@@ -35,6 +35,7 @@
 | 24 | `StatelessWidget` | أساسي | ويدجت ثابت لا تتغير بياناته بعد البناء |
 | 25 | `StatefulWidget` | أساسي | ويدجت تفاعلي يحتوي على حالة وبيانات تتغير عبر `setState()` |
 | 26 | `ThemeData` | حسب الحاجة | توحيد الألوان والمظهر العام في كامل التطبيق |
+| 27 | `TextField` / `TextFormField` | أساسي | حقل إدخال نصوص أو أرقام من المستخدم مع خيارات التنسيق والتحقق |
 
 ---
 
@@ -401,6 +402,54 @@ setState(() {
 ```dart
 theme: ThemeData.dark().copyWith(
   scaffoldBackgroundColor: const Color(0xFF0A0E21),
+)
+```
+
+---
+
+### 27. `TextField` & `TextFormField`
+* **وظيفته**: عنصر إدخال النصوص والأرقام والبيانات من المستخدم عبر لوحة المفاتيح التفاعلية.
+* **الفرق بينهما**:
+  - **`TextField`**: حقل إدخال نصوص مباشر وسريع للمهام العادية.
+  - **`TextFormField`**: نسخة متطورة ترتبط بـ `Form`، وتدعم خاصية التحقق من صحة المدخلات (`validator`) لإظهار رسالة خطأ تلقائية باللون الأحمر إذا كان الإدخال فارغاً أو غير صحيح.
+* **أهم الخصائص (Key Properties)**:
+  - `controller`: ربط الحقل بـ `TextEditingController` لقراءة ما كتبه المستخدم أو مسحه برمجياً.
+  - `keyboardType`: تحديد نوع لوحة المفاتيح (`TextInputType.number` للأرقام، أو `TextInputType.emailAddress` للبريد، أو `TextInputType.text`).
+  - `obscureText: true`: إخفاء الأحرف بنجوم (تُستخدم لحقول كلمات المرور Password).
+  - `decoration: InputDecoration(...)`: لتنسيق شكل الحقل بالكامل:
+    - `hintText`: النص التوضيحي الباهت داخل الحقل (Placeholder).
+    - `labelText`: عنوان الحقل الذي يرتفع للأعلى عند الكتابة.
+    - `prefixIcon`: أيقونة تظهر في بداية الحقل من الداخل.
+    - `suffixIcon`: أيقونة في نهاية الحقل (مثل زر إظهار/إخفاء كلمة المرور).
+    - `border`, `enabledBorder`, `focusedBorder`: تخصيص شكل ولون الحدود عند التركيز أو الابتعاد.
+    - `filled` و `fillColor`: تلوين خلفية الحقل.
+  - `onChanged`: دالة تلتقط كل حرف يكتبه المستخدم لحظياً.
+* **مثال عملي من الكود (حقل إدخال وزن أو اسم مخصص بتصميم داكن وإطار سمائي)**:
+```dart
+TextField(
+  controller: weightInputController,
+  keyboardType: TextInputType.number,
+  style: const TextStyle(color: Colors.white, fontSize: 18),
+  decoration: InputDecoration(
+    filled: true,
+    fillColor: const Color(0xFF1D1E33),
+    labelText: 'Enter Weight (kg)',
+    labelStyle: const TextStyle(color: Color(0xFFB0BEC5)),
+    hintText: 'e.g. 70',
+    hintStyle: const TextStyle(color: Colors.white38),
+    prefixIcon: const Icon(Icons.fitness_center, color: Color(0xFF00E5FF)),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Color(0xFF00E5FF), width: 2),
+    ),
+  ),
+  onChanged: (value) {
+    print('User typed: $value');
+  },
 )
 ```
 
